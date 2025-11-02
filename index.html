@@ -3,236 +3,363 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>RYUNOSUKE TAKADA — RYU Percussion</title>
-  <meta name="description" content="Ryunosuke Takada — Mathematics, algorithmic composition, acoustic research and instrument design." />
+  <title>Ryunosuke Takada — RYU Percussion</title>
+  <meta name="description" content="Ryunosuke Takada — Mathematical music, algorithmic composition, acoustic research, instrument design." />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
   <style>
     :root{
-      --bg:#0b0b0c; --card:#0f1113; --muted:#9aa3b2; --accent:#8be9fd; --accent-2:#7c5cff;
-      --glass: rgba(255,255,255,0.03);
-      --radius:16px;
-      --maxw:1100px;
-      --mono: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      --bg:#050506; --panel:#0f1114; --muted:#9aa3b2; --accent:#00e5ff; --accent-2:#7c5cff;
+      --glass: rgba(255,255,255,0.03); --radius:14px; --maxw:1200px; --mono: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
     }
     *{box-sizing:border-box}
-    html,body{height:100%;margin:0;font-family:var(--mono);background:radial-gradient(1200px 600px at 10% 10%, rgba(124,92,255,0.06), transparent), radial-gradient(900px 400px at 90% 90%, rgba(139,233,253,0.04), transparent), var(--bg);color:#e6eef6}
-    a{color:inherit;text-decoration:none}
-    header{max-width:var(--maxw);margin:32px auto;padding:24px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));display:flex;align-items:center;gap:20px}
+    html,body{height:100%;margin:0;font-family:var(--mono);background:linear-gradient(180deg,var(--bg),#07070a);color:#e8f1f8;-webkit-font-smoothing:antialiased}
+    a{color:inherit}
 
-    /* avatar */
-    .avatar{width:96px;height:96px;border-radius:14px;overflow:hidden;flex:0 0 96px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:28px;color:#051017}
-    .hero{flex:1}
-    .title{font-weight:800;font-size:20px;margin:0}
-    .subtitle{margin:4px 0 0;color:var(--muted);font-weight:500}
+    /* NAV */
+    .nav-wrap{position:fixed;top:0;left:0;right:0;backdrop-filter:blur(6px);background:linear-gradient(180deg, rgba(10,10,12,0.6), rgba(10,10,12,0.35));border-bottom:1px solid rgba(255,255,255,0.03);z-index:60}
+    nav{max-width:var(--maxw);margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 20px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:800;color:#051017}
+    .nav-links{display:flex;gap:18px;align-items:center}
+    .nav-links a{padding:8px 12px;border-radius:8px;color:var(--muted);font-weight:600;font-size:14px}
+    .nav-links a:hover{color:white;background:rgba(255,255,255,0.02)}
+    .cta{padding:8px 12px;border-radius:10px;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#051017;font-weight:800}
 
-    /* language toggle */
-    .controls{display:flex;gap:8px;align-items:center}
-    .toggle{background:var(--glass);padding:8px;border-radius:999px;display:inline-flex;gap:6px}
-    .lang-btn{background:transparent;border:0;color:var(--muted);padding:6px 10px;border-radius:8px;cursor:pointer;font-weight:600}
-    .lang-btn.active{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#051017}
+    /* Hero */
+    .hero{max-width:var(--maxw);margin:110px auto 36px;padding:36px 20px;display:grid;grid-template-columns:1fr 360px;gap:28px}
+    .hero-card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:28px;border-radius:16px;box-shadow:0 12px 40px rgba(2,6,23,0.6);border:1px solid rgba(255,255,255,0.03)}
+    h1{margin:0;font-size:36px;letter-spacing:0.4px}
+    .sub{color:var(--muted);margin-top:8px}
+    .explore{margin-top:18px;display:flex;gap:12px}
+    .btn{padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:700}
+    .btn-primary{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#051017}
+    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
 
-    main{max-width:var(--maxw);margin:28px auto;padding:20px}
-    .grid{display:grid;grid-template-columns:1fr 360px;gap:20px}
-    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:var(--radius);box-shadow:0 6px 30px rgba(2,6,23,0.6);border:1px solid rgba(255,255,255,0.03)}
+    /* waveform background */
+    .canvas-wrap{position:relative;height:220px;border-radius:12px;overflow:hidden;margin-top:18px}
+    .canvas-bg{position:absolute;inset:0;background:radial-gradient(600px 240px at 10% 20%, rgba(124,92,255,0.06), transparent), radial-gradient(500px 200px at 90% 80%, rgba(0,229,255,0.03), transparent)}
 
-    /* hero left */
-    .lead{font-weight:700;font-size:28px;margin:0 0 8px}
-    .lead small{display:block;font-size:14px;color:var(--muted);font-weight:500}
-    .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-    .chip{padding:8px 10px;border-radius:999px;background:rgba(255,255,255,0.02);font-size:13px;color:var(--muted)}
-
-    /* animated waveform */
-    .wave-wrap{margin-top:18px;height:72px;background:linear-gradient(90deg, rgba(255,255,255,0.01), transparent);border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden}
-    .wave{width:200%;height:100%;background:repeating-linear-gradient(90deg, rgba(0,0,0,0) 0 8px, rgba(139,233,253,0.06) 8px 9px);animation:slide 6s linear infinite}
-    @keyframes slide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-
-    /* right column */
-    .side h3{margin-top:0}
-    .stat{display:flex;gap:12px;align-items:center}
-    .stat .num{font-weight:800;font-size:20px}
-    .socials{display:flex;gap:12px;margin-top:12px}
-    .soc{padding:8px;border-radius:10px;background:rgba(255,255,255,0.02);display:inline-flex;gap:8px;align-items:center}
+    /* right side quick card */
+    .quick{display:flex;flex-direction:column;gap:14px}
+    .meta{background:rgba(255,255,255,0.02);padding:12px;border-radius:12px}
+    .meta .k{font-size:12px;color:var(--muted)}
+    .meta .v{font-weight:800;font-size:18px}
 
     /* sections */
-    section.block{margin-top:20px}
-    .project{display:flex;gap:12px;align-items:flex-start}
-    .project .meta{font-size:13px;color:var(--muted)}
+    main{max-width:var(--maxw);margin:0 auto;padding:12px 20px 80px}
+    section.card{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));padding:22px;border-radius:14px;margin-top:20px;border:1px solid rgba(255,255,255,0.02)}
+    .grid-2{display:grid;grid-template-columns:1fr 360px;gap:22px}
+    h2{margin:0 0 8px}
+    ul{margin:8px 0 0 18px}
 
-    footer{max-width:var(--maxw);margin:28px auto;padding:18px;color:var(--muted);font-size:13px;text-align:center}
+    /* research long preformatted */
+    .paper{white-space:pre-wrap;font-family:inherit;background:rgba(255,255,255,0.01);padding:14px;border-radius:10px;border:1px dashed rgba(255,255,255,0.02);max-height:520px;overflow:auto}
+
+    /* gallery */
+    .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:12px}
+    .thumb{aspect-ratio:4/3;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));display:flex;align-items:center;justify-content:center;color:var(--muted);font-weight:700}
+
+    /* footer */
+    footer{max-width:var(--maxw);margin:40px auto;padding:18px;color:var(--muted);font-size:13px;text-align:center}
 
     /* responsive */
-    @media (max-width:980px){
-      .grid{grid-template-columns:1fr;}
-      header{flex-direction:row;gap:14px}
-      .avatar{width:80px;height:80px}
-    }
+    @media (max-width:980px){.hero{grid-template-columns:1fr}.grid-2{grid-template-columns:1fr}.nav-links{display:none}}
 
-    /* subtle entrance */
-    .card, header{transform:translateY(8px);opacity:0;animation:in 0.6s forwards;}
-    header{animation-delay:0.05s}
-    .card{animation-delay:0.12s}
-    @keyframes in{to{transform:none;opacity:1}}
+    /* subtle animations */
+    [data-anim]{opacity:0;transform:translateY(8px);animation:in .6s forwards;animation-delay:calc(var(--d,0)*0.05s)}
+    @keyframes in{to{opacity:1;transform:none}}
 
-    /* focus styles */
-    button:focus{outline:2px solid rgba(139,233,253,0.2);outline-offset:2px}
+    /* smooth scroll */
+    html {scroll-behavior:smooth}
+
+    /* accessible focus */
+    a:focus, button:focus{outline:2px solid rgba(124,92,255,0.18);outline-offset:2px}
   </style>
 </head>
 <body>
-  <header role="banner">
-    <div class="avatar" aria-hidden="true">RY</div>
-    <div class="hero">
-      <p class="title" data-i18n="name">RYUNOSUKE TAKADA</p>
-      <p class="subtitle" data-i18n="tag">Mathematics · Algorithmic Composition · Acoustic Physics · Instrument Design</p>
-    </div>
-    <div class="controls">
-      <div class="toggle" role="tablist" aria-label="Language selector">
-        <button class="lang-btn active" data-lang="ja">日本語</button>
-        <button class="lang-btn" data-lang="en">EN</button>
+  <div class="nav-wrap">
+    <nav>
+      <div class="brand">
+        <div class="logo" aria-hidden="true">RY</div>
+        <div>
+          <div style="font-weight:800">Ryunosuke Takada</div>
+          <div style="font-size:12px;color:var(--muted)">Mathematical Music • Acoustic Research • Instrument Design</div>
+        </div>
       </div>
+      <div class="nav-links" role="navigation" aria-label="Primary">
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#research">Research</a>
+        <a href="#paintings">Paintings</a>
+        <a href="#music">Music</a>
+        <a href="#mathart">Math Art</a>
+        <a href="#products">Products</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <button class="btn btn-ghost" id="lang-toggle" aria-pressed="false">EN / JP</button>
+        <a class="cta" href="#contact">Contact</a>
+      </div>
+    </nav>
+  </div>
+
+  <!-- HERO / HOME -->
+  <header id="home" class="hero" role="banner">
+    <div class="hero-card" data-anim style="--d:1">
+      <h1>Ryunosuke Takada</h1>
+      <div class="sub">Mathematical Musician · Researcher · Instrument Designer</div>
+      <p style="margin-top:18px;line-height:1.6" data-i18n>
+        高田龍之介（2007年生） — 数理音楽学、アルゴリズミック作曲、音響物理学を横断する研究・制作を行う。RYU Percussion 代表。
+      </p>
+      <div class="explore">
+        <a class="btn btn-primary" href="#about">Explore</a>
+        <a class="btn btn-ghost" href="#research">Research</a>
+      </div>
+
+      <div class="canvas-wrap" aria-hidden="true">
+        <div class="canvas-bg"></div>
+        <!-- simple animated SVG waveform -->
+        <svg viewBox="0 0 1200 220" preserveAspectRatio="none" style="position:relative;z-index:2;width:100%;height:100%"> 
+          <path id="wave" d="" fill="none" stroke="url(#g)" stroke-width="2" stroke-linecap="round"/>
+          <defs>
+            <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+              <stop offset="0%" stop-color="#00e5ff" stop-opacity="0.9"/>
+              <stop offset="100%" stop-color="#7c5cff" stop-opacity="0.9"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+
     </div>
+
+    <aside class="quick" style="align-self:start" data-anim style="--d:2">
+      <div class="meta">
+        <div class="k">Name</div>
+        <div class="v">高田 龍之介</div>
+      </div>
+      <div class="meta">
+        <div class="k">Age</div>
+        <div class="v">18</div>
+      </div>
+      <div class="meta">
+        <div class="k">Location</div>
+        <div class="v">Tokyo, Japan</div>
+      </div>
+      <div class="meta">
+        <div class="k">Business</div>
+        <div class="v">RYU Percussion</div>
+      </div>
+      <div class="meta" style="display:flex;gap:8px;justify-content:center">
+        <a class="btn btn-ghost" href="#contact">Contact</a>
+        <a class="btn btn-ghost" href="#projects">CV / Papers</a>
+      </div>
+    </aside>
   </header>
 
   <main>
-    <div class="grid">
-      <div class="card">
-        <h2 class="lead" data-i18n="about_title">About</h2>
-        <p data-i18n="about_text">高田龍之介 — 数理音楽学、アルゴリズミック作曲、音響物理学。RYU Percussion 代表。</p>
+    <!-- ABOUT (contains full Home content as requested) -->
+    <section id="about" class="card" data-anim style="--d:3">
+      <h2>About Me</h2>
+      <p><strong>名前</strong>: 高田龍之介</p>
+      <p><strong>年齢</strong>: 18歳</p>
+      <p><strong>興味</strong>: 数理音楽学 / 数学 / 音楽 / 物理学 / アルゴリズミック作曲 / AI / プログラミング / 絵画 / デザイン / 俳句 / ルービックキューブ / ギフテッド教育/ STEM教育 / 機械学習/ 楽器設計</p>
+      <p><strong>研究テーマ</strong>: 数理音楽学 / アルゴリズミック作曲 / 音響物理学 / 数学への音楽的アプローチ / ソニフィケーション / ζ関数 / 素数</p>
+      <p><strong>ビジネス</strong>: RYU Percussion代表</p>
 
-        <div class="chips" aria-hidden="true">
-          <span class="chip">Mathematics</span>
-          <span class="chip">Algorithmic Composition</span>
-          <span class="chip">Acoustics</span>
-          <span class="chip">Instrument Design</span>
-        </div>
+      <hr style="margin:18px 0;border:none;border-top:1px solid rgba(255,255,255,0.02)">
 
-        <div class="wave-wrap" aria-hidden="true">
-          <div class="wave"></div>
-        </div>
-
-        <section class="block">
-          <h3 data-i18n="skills_title">Skills</h3>
+      <h3>Skills</h3>
+      <div class="grid-2">
+        <div>
+          <h4>Mathematics & Physics</h4>
           <ul>
-            <li data-i18n="skill_1">複素解析 / トポロジー / 数論 / 音響物理学</li>
-            <li data-i18n="skill_2">ピアノ / スネアドラムソロ / 作曲・編曲・サウンドデザイン</li>
-            <li data-i18n="skill_3">Python / C++ / 音響解析（FFT/PSD/ウェーブレット）</li>
+            <li>複素解析 / トポロジー / 数論 / 音響物理学</li>
+            <li>確率過程とリズム生成の数理解析</li>
+            <li>ゼータ関数のソニフィケーション</li>
           </ul>
-        </section>
 
-        <section class="block">
-          <h3 data-i18n="research_title">Research</h3>
-          <p data-i18n="research_text">スネアドラム音響特性の定量評価、ゼータ関数のソニフィケーションなど。研究論文・実装コードを公開予定。</p>
-        </section>
-
-        <section class="block">
-          <h3 data-i18n="projects_title">Projects</h3>
-          <div class="project">
-            <div>
-              <strong>Mathematical Soundscape</strong>
-              <div class="meta" data-i18n="proj_1">ゼータ関数零点の可聴化プロジェクト</div>
-            </div>
-          </div>
-          <div class="project" style="margin-top:12px">
-            <div>
-              <strong>RYU Percussion</strong>
-              <div class="meta" data-i18n="proj_2">自作楽器の設計・製作・販売</div>
-            </div>
-          </div>
-        </section>
-
+          <h4 style="margin-top:12px">Music & Composition</h4>
+          <ul>
+            <li>ピアノ / スネアドラムソロ / パーカッション（ピアノ・作曲・ソルフェージュを荒西要介氏、打楽器を故・関修一郎氏に師事）</li>
+            <li>作曲・編曲・サウンドデザイン</li>
+            <li>数理的作曲法（確率モデル・マルコフ連鎖・クセナキス的手法・音響的多元構造など）</li>
+            <li>楽器設計・音響工学・リズム理論</li>
+            <li>音響解析・物理音響モデリング</li>
+          </ul>
+        </div>
+        <aside>
+          <div class="meta"><div class="k">Programming & AI</div><div class="v">Python / Java / C++ / C</div></div>
+          <div style="height:12px"></div>
+          <div class="meta"><div class="k">Audio Analysis</div><div class="v">FFT / PSD / Zero-crossing / Wavelets</div></div>
+          <div style="height:12px"></div>
+          <div class="meta"><div class="k">Languages</div><div class="v">日本語 / 英語 / ドイツ語 / フランス語 / イタリア語 / スペイン語</div></div>
+        </aside>
       </div>
 
-      <aside class="card side" aria-label="Sidebar">
-        <h3 data-i18n="contact_title">Contact & Quick Info</h3>
-        <div class="stat" style="margin-top:8px">
-          <div>
-            <div class="num">18</div>
-            <div class="meta" data-i18n="age">Age</div>
-          </div>
-          <div style="margin-left:auto;text-align:right">
-            <div class="meta" data-i18n="locale">Tokyo, Japan</div>
-            <div class="meta" data-i18n="role">Artist · Researcher</div>
-          </div>
+      <h3 style="margin-top:18px">Research Interests</h3>
+      <ul>
+        <li>素数と音の構造的対応</li>
+        <li>ゼータ関数のソニフィケーション</li>
+        <li>ポリリズムの確率論的生成</li>
+        <li>トポロジーと音響空間の構成</li>
+        <li>AIによる作曲モデル</li>
+        <li>ギフテッド教育・STEM教育</li>
+      </ul>
+
+      <h3 style="margin-top:18px">Projects & Works</h3>
+      <ul>
+        <li><strong>Algorithmic Composition</strong>: 数理アルゴリズムと音響を統合した作曲・研究活動。確率モデル、フラクタル構造、非整数拍子の統計的生成などを実装</li>
+        <li><strong>RYU Percussion</strong>: 自作楽器ブランド。設計・製作・演奏・販売を行う。</li>
+        <li><strong>Mathematical Soundscape</strong>: ゼータ関数の零点を音として可視化・可聴化する実験的プロジェクト</li>
+        <li><strong>Educational Vision</strong>: 数学・音楽・芸術・科学の統合的教育モデルを構想</li>
+      </ul>
+
+      <h3 style="margin-top:18px">Community & Outreach</h3>
+      <ul>
+        <li>ギフテッド教育・STEAM教育の普及活動</li>
+        <li>海外アーティスト・研究者との共同制作・研究交流</li>
+      </ul>
+    </section>
+
+    <!-- RESEARCH -->
+    <section id="research" class="card" data-anim style="--d:4">
+      <h2>Research</h2>
+      <p class="sub">選択した研究の要旨と主要結果（抜粋）</p>
+
+      <h3 style="margin-top:12px">Snare Drum Acoustics Analysis (2025)</h3>
+      <div class="paper">
+<strong>Title:</strong> Quantitative Evaluation of the Physical Influence of Constituent Components on the Acoustic Characteristics of Snare Drums
+
+<strong>Overview:</strong>
+スネアドラムの構成要素（スネアワイヤー、スティック、スタンド）が音響特性に与える影響を300以上のサンプルから解析。ANOVA、PCA、相関分析を適用し、主要効果と相互作用を定量化。
+
+<strong>Key findings:</strong>
+- スネアワイヤーがスペクトル重心の22%を説明（η² = 0.22）
+- スタンドがディケイ時間の20%を説明（η² = 0.20）
+- スティックがアタック時間の18%を説明（η² = 0.18）
+
+（本文は要約。データセット・コードは入手可能。）
+      </div>
+
+      <h3 style="margin-top:12px">Spectral–Rhythmic Sonification of Riemann Zeros (2025)</h3>
+      <div class="paper">
+この研究は、リーマンゼータ関数の非自明零点に見られるGUE統計を相補的な音響表現（リズム・テクスチャ・メロディ）へと変換し、その知覚的・解析的性質を検証する。時間表現（ゼータ・リズム）と周波数表現（ゼータ・テクスチャ）を生成し、PSD・自己相関・ABXテストを通じて評価する計画を提示。
+
+（要旨抜粋。完全版はPDF参照）
+      </div>
+
+      <div style="margin-top:12px;display:flex;gap:12px">
+        <a class="btn btn-primary" href="#" onclick="alert('Full paper download will be added.');return false">Read Full Paper</a>
+        <a class="btn btn-ghost" href="#contact">Inquire</a>
+      </div>
+    </section>
+
+    <!-- PAINTINGS -->
+    <section id="paintings" class="card" data-anim style="--d:5">
+      <h2>Paintings</h2>
+      <p class="sub">Coming Soon — 油絵、数理的造形表現を展示予定</p>
+      <div class="gallery" aria-hidden="true">
+        <div class="thumb">Painting 1</div>
+        <div class="thumb">Painting 2</div>
+        <div class="thumb">Painting 3</div>
+        <div class="thumb">Painting 4</div>
+      </div>
+    </section>
+
+    <!-- MUSIC -->
+    <section id="music" class="card" data-anim style="--d:6">
+      <h2>Music</h2>
+      <p class="sub">Coming Soon — Snare × Piano、Solo Works、Algorithmic Composition の音源を掲載予定</p>
+      <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+        <div class="meta">Instagram: @ryu_percussion</div>
+        <div class="meta">YouTube / SoundCloud links will be added</div>
+      </div>
+    </section>
+
+    <!-- MATH ART -->
+    <section id="mathart" class="card" data-anim style="--d:7">
+      <h2>Math Art</h2>
+      <p class="sub">Coming Soon — インタラクティブな数理ビジュアライゼーション（WebGL / Three.js）を予定</p>
+      <div class="gallery">
+        <div class="thumb">Math Art 1</div>
+        <div class="thumb">Math Art 2</div>
+      </div>
+    </section>
+
+    <!-- PRODUCTS -->
+    <section id="products" class="card" data-anim style="--d:8">
+      <h2>Products</h2>
+      <p class="sub">RYU Percussion の製品（スネア、スタンド、マレット等）。販売・問い合わせはContactより。</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:12px">
+        <div class="meta"><div class="k">Snare Model A</div><div class="v">Prototype — Inquiry</div></div>
+        <div class="meta"><div class="k">Snare Stand</div><div class="v">Custom — Inquiry</div></div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="card" data-anim style="--d:9">
+      <h2>Contact</h2>
+      <p class="sub">ご質問・製品問い合わせ・共同研究の相談は以下へ</p>
+      <div style="display:flex;gap:18px;flex-wrap:wrap;margin-top:12px">
+        <div style="flex:1;min-width:280px">
+          <form onsubmit="event.preventDefault();sendMail();" id="contactForm">
+            <label style="display:block;font-weight:600;margin-bottom:6px">Name</label>
+            <input name="name" required style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit">
+            <label style="display:block;font-weight:600;margin:12px 0 6px">Email</label>
+            <input name="email" type="email" required style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit">
+            <label style="display:block;font-weight:600;margin:12px 0 6px">Message</label>
+            <textarea name="message" rows="6" required style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit"></textarea>
+            <div style="margin-top:10px;display:flex;gap:10px">
+              <button class="btn btn-primary" type="submit">Send</button>
+              <a class="btn btn-ghost" href="mailto:ryu_percussion@example.com">Email</a>
+            </div>
+          </form>
         </div>
-
-        <div class="socials">
-          <a class="soc" href="#" aria-label="Instagram">IG</a>
-          <a class="soc" href="#" aria-label="GitHub">GH</a>
-          <a class="soc" href="#" aria-label="Email">✉️</a>
-        </div>
-
-        <section style="margin-top:16px">
-          <h4 data-i18n="latest_title">Latest</h4>
-          <div class="meta">Snare Drum Acoustics Analysis (2025)</div>
-        </section>
-
-        <section style="margin-top:16px">
-          <h4 data-i18n="download_title">Download CV</h4>
-          <a class="soc" href="#" role="button">PDF</a>
-        </section>
-      </aside>
-    </div>
-
-    <section class="card" style="margin-top:20px">
-      <h3 data-i18n="vision_title">Vision & Education</h3>
-      <p data-i18n="vision_text">STEM×音楽を軸にした教育モデルの提案。ギフテッド教育・STEAM普及活動。</p>
+        <aside style="flex:0 0 320px">
+          <div class="meta"><div class="k">Instagram</div><div class="v">@ryu_percussion</div></div>
+          <div style="height:12px"></div>
+          <div class="meta"><div class="k">Location</div><div class="v">Tokyo, Japan</div></div>
+          <div style="height:12px"></div>
+          <div class="meta"><div class="k">Download</div><div class="v"><a href="/cv.pdf">CV (PDF)</a></div></div>
+        </aside>
+      </div>
     </section>
   </main>
 
   <footer>
-    <div>© <span id="year">2025</span> Ryunosuke Takada — RYU Percussion • <span data-i18n="footer_lang">日本語 / English</span></div>
+    © 2025 Ryunosuke Takada — RYU Percussion • Japan
   </footer>
 
   <script>
-    // --- Simple i18n dictionary ---
-    const dictionary = {
-      ja:{
-        name: 'RYUNOSUKE TAKADA', tag: '数理音楽学 · アルゴリズミック作曲 · 音響物理学 · 楽器設計',
-        about_title: 'About', about_text: '高田龍之介 — 数理音楽学、アルゴリズミック作曲、音響物理学。RYU Percussion 代表。',
-        skills_title:'Skills', skill_1:'複素解析 / トポロジー / 数論 / 音響物理学', skill_2:'ピアノ / スネアドラムソロ / 作曲・編曲・サウンドデザイン', skill_3:'Python / C++ / 音響解析（FFT/PSD/ウェーブレット）',
-        research_title:'Research', research_text:'スネアドラム音響特性の定量評価、ゼータ関数のソニフィケーションなど。研究論文・実装コードを公開予定。',
-        projects_title:'Projects', proj_1:'ゼータ関数零点の可聴化プロジェクト', proj_2:'自作楽器の設計・製作・販売',
-        contact_title:'Contact & Quick Info', age:'年齢', locale:'東京, 日本', role:'アーティスト · 研究者', latest_title:'Latest', download_title:'Download CV', vision_title:'Vision & Education', vision_text:'STEM×音楽を軸にした教育モデルの提案。ギフテッド教育・STEAM普及活動。', footer_lang:'日本語 / English'
+    // Simple language toggle (JP/EN) - minimal translations for headings
+    const translations = {
+      en: {
+        'Mathematical Musician · Researcher · Instrument Designer':'Mathematical Musician · Researcher · Instrument Designer',
+        'About Me':'About Me','Skills':'Skills','Research Interests':'Research Interests','Projects & Works':'Projects & Works','Community & Outreach':'Community & Outreach',
+        'Contact':'Contact','Paintings':'Paintings','Music':'Music','Math Art':'Math Art','Products':'Products'
       },
-      en:{
-        name: 'RYUNOSUKE TAKADA', tag: 'Mathematics · Algorithmic Composition · Acoustic Physics · Instrument Design',
-        about_title: 'About', about_text: 'Ryunosuke Takada — mathematical musicology, algorithmic composition and acoustic physics. Founder of RYU Percussion.',
-        skills_title:'Skills', skill_1: 'Complex analysis / Topology / Number theory / Acoustic physics', skill_2:'Piano / Snare drum solo / Composition & sound design', skill_3:'Python / C++ / Acoustic analysis (FFT/PSD/Wavelets)',
-        research_title:'Research', research_text:'Quantitative analysis of snare-drum acoustics and sonic representations of zeta zeros. Papers & code forthcoming.',
-        projects_title:'Projects', proj_1:'Sonification of zeta zeros', proj_2:'Design, manufacture and sale of handcrafted instruments',
-        contact_title:'Contact & Quick Info', age:'Age', locale:'Tokyo, Japan', role:'Artist · Researcher', latest_title:'Latest', download_title:'Download CV', vision_title:'Vision & Education', vision_text:'Designing integrated learning models across STEM and music. Advocacy for gifted & STEAM education.', footer_lang:'日本 / English'
-      }
+      ja: {}
     };
+    const langBtn = document.getElementById('lang-toggle');
+    let lang = localStorage.getItem('site-lang') || 'ja';
+    langBtn.addEventListener('click', ()=>{ lang = (lang==='ja'?'en':'ja'); localStorage.setItem('site-lang', lang); applyLang(); langBtn.setAttribute('aria-pressed', lang==='en') });
+    function applyLang(){ if(lang==='en'){ document.querySelectorAll('h2, h3, .sub').forEach(el=>{const t = translations.en[el.textContent.trim()]; if(t) el.textContent = t;}); } else { location.reload(); } }
 
-    // set default language based on user preference or browser
-    const defaultLang = 'ja';
-    let current = localStorage.getItem('site-lang') || (navigator.language && navigator.language.startsWith('en') ? 'en' : defaultLang);
-
-    const buttons = document.querySelectorAll('.lang-btn');
-    buttons.forEach(b=>b.addEventListener('click',()=>{
-      const lang = b.getAttribute('data-lang'); setLang(lang);
-    }));
-
-    function setLang(lang){
-      current = lang; localStorage.setItem('site-lang',lang);
-      document.querySelectorAll('[data-i18n]').forEach(el=>{
-        const key = el.getAttribute('data-i18n');
-        const txt = (dictionary[lang] && dictionary[lang][key]) || dictionary['ja'][key] || el.textContent;
-        el.textContent = txt;
-      });
-      document.querySelectorAll('.lang-btn').forEach(btn=>btn.classList.toggle('active', btn.getAttribute('data-lang')===lang));
-      document.documentElement.lang = (lang==='en'?'en':'ja');
+    // Animated waveform path generator
+    const path = document.getElementById('wave');
+    function genWave(offset){
+      const w = 1200, h = 220, pts = 60; let d='M0 '+(h/2)+' ';
+      for(let i=0;i<=pts;i++){ const x = (i/pts)*w; const y = (h/2) + Math.sin((i/pts)*Math.PI*6 + offset)* (20 + 40*Math.sin((i/pts)*3 + offset*0.5)); d += (i===0? 'L':'L') + x + ' ' + y + ' '; }
+      return d;
     }
+    let off = 0; function anim(){ off += 0.02; path.setAttribute('d', genWave(off)); requestAnimationFrame(anim);} anim();
 
-    // initialize
-    setLang(current);
+    // simple contact handler (will open mailto)
+    function sendMail(){ const f=document.getElementById('contactForm'); const name=f.name.value; const email=f.email.value; const msg=f.message.value; const subject=encodeURIComponent('Contact from website: '+name); const body=encodeURIComponent('Email: '+email+'\n\n'+msg); window.location.href = 'mailto:ryu_percussion@example.com?subject='+subject+'&body='+body; }
 
-    // small accessibility improvement: keyboard toggle
-    document.addEventListener('keydown', (e)=>{
-      if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='l'){
-        setLang(current==='ja'?'en':'ja');
-      }
-    });
+    // small A11y: show keyboard hint
+    document.addEventListener('keydown', (e)=>{ if((e.ctrlKey||e.metaKey)&& e.key.toLowerCase()==='k'){ document.querySelector('main').scrollIntoView({behavior:'smooth'}); } });
   </script>
 </body>
 </html>
